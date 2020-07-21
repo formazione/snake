@@ -8,6 +8,9 @@ clock = pygame.time.Clock()
 # Define Constants
 BOARD_SIZE = 20  # Size of the board, in block
 BLOCK_SIZE = 20  # Size of 1 block, in pixel
+HEAD_COLOR = (0, 100, 0)  # Dark Green
+BODY_COLOR = (0, 200, 0)  # Light Green
+FOOD_COLOR = (200, 0, 0)  # Dark Red
 GAME_SPEED = 8  # Game speed (Normal = 10), The bigger, the faster
 window = pygame.display.set_mode((BOARD_SIZE * BLOCK_SIZE, BOARD_SIZE * BLOCK_SIZE))
 pygame.display.set_caption("window")
@@ -49,7 +52,6 @@ class Snake():
             self.head[1] -= 1
         if self.direction == "DOWN":
             self.head[1] += 1
-
         self.body.insert(0, list(self.head))
         if self.head == food_pos:
             return 1
@@ -59,9 +61,6 @@ class Snake():
             return 0
 
     def check_collision(self):
-        # Check if the head collides with the edges of the board
-        # if 1 => GAME OVER
-
         conditions = (
         self.head[0] >= 20 or self.head[0] < 0,
         self.head[1] > 20 or self.head[1] < 0,
@@ -92,42 +91,34 @@ class FoodSpawner():
 snake = Snake()
 food_spawner = FoodSpawner()
 
+body = pygame.Surface((20, 20))
+body.fill((255, 255, 0))
+blacktail = pygame.Surface((20, 20))
+blacktail.fill((0, 0, 0))
+fruit = pygame.Surface((20, 20))
+fruit.fill((255, 0, 0))
+
+def blit_all(food_pos):
+    "blit head body and tail, altogether"
+    global blacktail, body, fruit
+
+    list_of_sprites = []
+    # head = 1
+    btail = (blacktail, (snake.body[-1][0] * BLOCK_SIZE, snake.body[-1][1] * BLOCK_SIZE))
+    for pos in snake.body:
+        # bhead = (head, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE))
+        bbody = (body, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE))
+        bfruit = (fruit, (food_pos[0] * BLOCK_SIZE, food_pos[1] * BLOCK_SIZE))
+        # if head == 1:
+        #     list_of_sprites.append(head)
+        #     head = 0
+        # else:
+        list_of_sprites.append(bbody)
+        list_of_sprites.append(btail)
+        list_of_sprites.append(bfruit)
 
 
-def draw_head(pos):
-    pygame.draw.rect(
-        window,
-        (0, 255, 0),
-        pygame.Rect(
-            pos[0] * BLOCK_SIZE,
-            pos[1] * BLOCK_SIZE,
-            BLOCK_SIZE,
-            BLOCK_SIZE))
-
-def blit_head(pos):
-    "Use a surface, instead"
-    window.blit(head, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE,))
-
-def blit_blacktail(pos):
-    "Use a surface, instead"
-    window.blit(head, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE,))
-
-def draw_body(pos):
-    pygame.draw.rect(window, (0, 128, 0), pygame.Rect(pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
-
-def delete_tail(pos):
-    pygame.draw.rect(window, (0, 0, 0), pygame.Rect(snake.body[-1][0] * BLOCK_SIZE, snake.body[-1][1] * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
-
-
-def delete_fruit(pos, food_pos):
-    x = food_pos[0] * BLOCK_SIZE + 10
-    y = food_pos[1] * BLOCK_SIZE + 10
-    r = 9
-    gfxdraw.filled_circle(window, x, y, r, (0, 0, 0))
-
-
-def draw_fruit(pos, food_pos):
-    gfxdraw.filled_circle(window, food_pos[0] * BLOCK_SIZE + 10, food_pos[1] * BLOCK_SIZE + 10, 9, (255, 0, 0))
+    window.blits(blit_sequence=(list_of_sprites))
 
 
 pygame.init()
@@ -147,7 +138,6 @@ def write(text_to_show, x=0, y=0, middle=0):
 
 def restart():
     global GAME_SPEED
-
 
     GAME_SPEED = 8
     window.fill((0, 0, 0))
@@ -195,24 +185,15 @@ def start():
                 elif event.key == pygame.K_LEFT:
                     snake.change_direction_to("LEFT")
         if snake.move(food_pos) == 1:
-            delete_fruit(pos, food_pos)
+            # delete_fruit(pos, food_pos)
             score += 1
             food_spawner.set_food_on_screen(False)
             GAME_SPEED += 1
             food_pos = food_spawner.spawn_food()
 
+        blit_all(food_pos)
 
-        # window.fill(pygame.Color(225, 225, 225))
-        # Draw snake
-        head = 1
-        for pos in snake.body:
-            if head == 1:
-                draw_head(pos)
-                head = 0
-            else:
-                draw_body(pos)
-        delete_tail(pos)
-        draw_fruit(pos,food_pos)
+        # draw_fruit(food_pos)
 
         if snake.check_collision() == 1:
             loop = 0
