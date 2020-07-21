@@ -56,6 +56,9 @@ class Snake():
             return 0
 
     def check_collision(self):
+        # Check if the head collides with the edges of the board
+        # if 1 => GAME OVER
+
         conditions = (
         self.head[0] >= 20 or self.head[0] < 0,
         self.head[1] > 20 or self.head[1] < 0,
@@ -65,7 +68,7 @@ class Snake():
             return 1
         else:
             return 0
-     return 1
+
 
 
 
@@ -101,6 +104,8 @@ def game_over():
     pygame.display.set_caption("SNAKE GAME  |  Score: " + str(score) + "  |  GAME OVER. Press any key to quit ...")
     while True:
         event = pygame.event.wait()
+        if event.type == pygame.QUIT:
+            break
         if event.type == pygame.KEYDOWN:
             break
     pygame.quit()
