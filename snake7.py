@@ -2,7 +2,7 @@ import pygame
 from pygame import gfxdraw
 import sys
 import random
-from functions.soundinit import init
+from functions.soundinit import sounds, random_sounds, play, random_play
 
 '''
 Snake 1.4
@@ -59,6 +59,7 @@ class Snake():
         else:
             "If do not eat... same size"
             self.body.pop()
+            random_play(random.choice(random_sounds))
             return 0
 
     def check_collision(self):
@@ -162,8 +163,10 @@ def restart():
 def press_to_start():
     global loop
 
-    init("sounds")
+    #init("sounds")
+    
     window.blit(write("Press s to start", middle=1), (0, 0))
+    window.blit(write("Music is experimental", 0, 0), (0, 30))
     pygame.display.update()
     while True:
         event = pygame.event.wait()
@@ -178,7 +181,6 @@ def press_to_start():
                 restart()
                 break
     pygame.quit()
-
 
 
 def start():
@@ -202,6 +204,7 @@ def start():
                 elif event.key == pygame.K_LEFT:
                     snake.change_direction_to("LEFT")
         if snake.move(food_pos) == 1:
+            play("click")
             score += 1
             food_spawner.set_food_on_screen(False)
             GAME_SPEED += 1

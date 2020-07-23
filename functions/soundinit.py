@@ -1,7 +1,8 @@
 import pygame
 from glob import glob
 from pathlib import Path
-
+import os
+import random
 
 def init(directory):
     '''
@@ -39,12 +40,24 @@ def init(directory):
     lsounds = glob(f"{directory}/*.mp3")
     # Dictionary with all sounds, keys are the name of wav
     sounds = {}
-    winsounds = []
+    random_sounds = []
     for sound in lsounds:
         filepath = Path(sound)
         if filepath.stem.startswith("Marker"):
-            winsounds.append(pygame.mixer.Sound(f"{filepath}"))
+            random_sounds.append(pygame.mixer.Sound(f"{filepath}"))
         else:
             sounds[filepath.stem] = pygame.mixer.Sound(f"{filepath}")
-    return sounds, winsounds
+    return sounds, random_sounds
 
+sounds, random_sounds = init("sounds")
+print(sounds)
+print(random_sounds)
+print(os.getcwd())
+
+def play(snd):
+    print(snd)
+    pygame.mixer.Sound.play(sounds[snd])
+
+def random_play(snd):
+    if random.randrange(1, 5) == 3:
+        pygame.mixer.Sound.play(snd)
