@@ -6,28 +6,33 @@ import random
 
 def init(directory):
     '''
-        "Initializing pygame and mixer"
-    To play a sound:
-        pygame.mixer.Sound.play(Puzzle.sounds[name])
+    How to use this module:
 
-    *'name' is the name of the wav file without wav.
-    *Puzzle is the name of the class where you put:
+    - THE FOLDER STRUCTURE
 
-    =============== EXAMPLE OF CODE =============
-    from functions.soundinit import init, play
+    main.py
+        |
+        functions
+        |    |
+        |   soundinit.py
+        |
+        sounds
+            |
+            click.mp3        call this with play("click")
+            Marker #1.mp3    call this with random_play() ... a random sound will be played for the files starting with Marker
+            ...
 
-    class Puzzle:
-        "Class with the global variables"
-        #'sounds' is the dir where the sounds are (you can change it).
-        sounds = init('sounds')
+    - HOW TO USE THIS
 
-    def play(snd):
-        "To play wav in sounds directory by the name"
-        pygame.mixer.Sound.play(Puzzle.sounds[snd]))
-
-
+    In the main.py (or other main file) import like this
+    ----------------------------------------------------------
+    from functions.soundinit import play, random_play
+    
     play("click")
-    ==============================================
+    random_play()
+    -----------------------------------------------------------
+    @ Giovanni Gatto 2020
+
     '''
 
     # This is to avoid lag
@@ -50,14 +55,19 @@ def init(directory):
     return sounds, random_sounds
 
 sounds, random_sounds = init("sounds")
-print(sounds)
-print(random_sounds)
 print(os.getcwd())
 
+
 def play(snd):
+    "Plays one of the sounds in the sounds folder using play('name')"
     print(snd)
     pygame.mixer.Sound.play(sounds[snd])
 
-def random_play(snd):
-    if random.randrange(1, 5) == 3:
-        pygame.mixer.Sound.play(snd)
+
+def random_play(rnd=3):
+    "Plays a random sounds at a randrange(1, 5) == rnd"
+    if random.randrange(1, 5) == rnd:
+        
+        sound = pygame.mixer.Sound(random.choice(random_sounds))
+        sound.set_volume(1 / random.randrange(1, 10))
+        sound.play()

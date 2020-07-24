@@ -2,7 +2,7 @@ import pygame
 from pygame import gfxdraw
 import sys
 import random
-from functions.soundinit import sounds, random_sounds, play, random_play
+from functions.soundinit import play, random_play
 
 '''
 Snake 1.4
@@ -27,10 +27,11 @@ class Snake():
         self.start()
 
     def start(self):
-        self.head = [5, 5]
-        self.body = [[self.head[0], self.head[1]],
-                     [self.head[0] - 1, self.head[1]],
-                     [self.head[0] - 2, self.head[1]]
+        self.x = 5
+        self.y = 5
+        self.body = [[self.x, self.y],
+                     [self.x - 1, self.y],
+                     [self.x - 2, self.y]
                      ]
         self.direction = "RIGHT"
 
@@ -46,28 +47,28 @@ class Snake():
 
     def move(self, food_pos):
         if self.direction == "RIGHT":
-            self.head[0] += 1
+            self.x += 1
         if self.direction == "LEFT":
-            self.head[0] -= 1
+            self.x -= 1
         if self.direction == "UP":
-            self.head[1] -= 1
+            self.y -= 1
         if self.direction == "DOWN":
-            self.head[1] += 1
-        self.body.insert(0, list(self.head))
-        if self.head == food_pos:
+            self.y += 1
+        self.body.insert(0, [self.x, self.y])
+        if [self.x, self.y] == food_pos:
             return 1
         else:
             "If do not eat... same size"
             self.body.pop()
-            random_play(random.choice(random_sounds))
+            random_play(rnd=random.randrange(3, 10))
             return 0
 
     def check_collision(self):
         "Check if it goes out or on himself"
         game_over_points = (
-        self.head[0] >= 20 or self.head[0] < 0,
-        self.head[1] > 20 or self.head[1] < 0,
-        [x for x in self.body[1:] if self.head == x]
+        self.x >= 20 or self.x < 0,
+        self.y > 20 or self.y < 0,
+        [x for x in self.body[4:] if (self.x, self.y) == x]
         )
         if any(game_over_points):
             return 1
@@ -105,11 +106,11 @@ fruit.fill((255, 0, 0))
 bscore2 = pygame.Surface((80, 15))
 bscore2.fill((0, 0, 0))
 def blit_all(food_pos):
-    "blit head body and tail, altogether"
+    "blit xy body and tail, altogether"
     global blacktail, body, fruit, bscore2
 
     list_of_sprites = []
-    # head = 1
+    # xy = 1
     btail = (blacktail, (snake.body[-1][0] * BLOCK_SIZE, snake.body[-1][1] * BLOCK_SIZE))
     text_surface = write(f"{score}", food_pos[0] * BOARD_SIZE + 5, food_pos[1] * BOARD_SIZE + 3, color="Black")
     btext = (text_surface, (food_pos[0] * BOARD_SIZE + 5, food_pos[1] * BOARD_SIZE + 3))
@@ -117,12 +118,12 @@ def blit_all(food_pos):
     bscore = (b_score, (0, 0))
     b_score2 = (bscore2, (0, 0))
     for pos in snake.body:
-        # bhead = (head, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE))
+        # bxy = (xy, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE))
         bbody = (body, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE))
         bfruit = (fruit, (food_pos[0] * BLOCK_SIZE, food_pos[1] * BLOCK_SIZE))
-        # if head == 1:
-        #     list_of_sprites.append(head)
-        #     head = 0
+        # if xy == 1:
+        #     list_of_sprites.append(xy)
+        #     xy = 0
         # else:
         list_of_sprites.append(bbody)
         list_of_sprites.append(btail)
@@ -203,7 +204,7 @@ def start():
                     snake.change_direction_to("DOWN")
                 elif event.key == pygame.K_LEFT:
                     snake.change_direction_to("LEFT")
-        if snake.move(food_pos) == 1:
+        if snake.move(food_pos):
             play("click")
             score += 1
             food_spawner.set_food_on_screen(False)
