@@ -12,34 +12,37 @@ class Game:
 
 
     def menu() -> None:
-        "The starting menu waitin to press s"
+        "PRESS S TO START"
+        Game.write('Snake', 0, 0, middle="")
         Game.write("Press s to start", middle="both")
-
+        # Wait the user to press 's' or to quit / escape
         while True:
             event = pygame.event.wait()
-            if event.type == pygame.QUIT:
+            if pygame.event.get(pygame.QUIT):
                 break
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    break
-                if event.key == pygame.K_s:
-                    print("Start")
-                    break
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE]:
+                break
+            if keys[pygame.K_s]:
+                print("Start")
+                break
         pygame.quit()
 
+
     def write(t, x: int = 0, y: int = 0, middle: str = "both", color="Coral") -> pygame.Surface:
-        text = Game.render_text(t, color)
+        "RENDERS AND BLIT THE TEXT ====================\
+        Examples to display text on the screen:  \
+        - Write in the middle:           \
+        Game.write('Game over')         \
+        - write everywhere:          \
+        Game.write('Snake', 0, 0, middle='')"
+        text = Game.font.render(t, 1, pygame.Color(color))
         if middle == "both":
             rect_middle = text.get_rect(center=((Game.WIDTH // 2, Game.HEIGHT //2)))
             Game.screen.blit(text, rect_middle)
         else:
             Game.screen.blit(text, (x, y))
         pygame.display.update()
-        return text
-
-    def render_text(t: str, color: str) -> pygame.Surface:
-        "Renders a text and return it as a Surface"
-        text = Game.font.render(t, 1, pygame.Color(color))
         return text
 
 

@@ -54,10 +54,6 @@ def init(directory):
             sounds[filepath.stem] = pygame.mixer.Sound(f"{filepath}")
     return sounds, random_sounds
 
-sounds, random_sounds = init("sounds")
-print(os.getcwd())
-
-
 def play(snd):
     "Plays one of the sounds in the sounds folder using play('name')"
     print(snd)
@@ -67,7 +63,8 @@ def play(snd):
 def random_play(rnd=3):
     "Plays a random sounds at a randrange(1, 5) == rnd"
     if random.randrange(1, 5) == rnd:
-        
         sound = pygame.mixer.Sound(random.choice(random_sounds))
         sound.set_volume(1 / random.randrange(1, 10))
         sound.play()
+
+sounds, random_sounds = init("sounds")
