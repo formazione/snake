@@ -18,6 +18,8 @@ class Snake():
         "I made the method so I can call it to restart"
         self.start()
 
+
+
     def start(self):
         "Where the snake starts and snake.body first list build"
         self.x = 5
@@ -58,7 +60,7 @@ class Snake():
             self.body.pop()
             # A random not at a random time and random volume
             return 0
-        print(f"{music=}")
+
         if music:
             print("music is on")
             random_play(rnd=random.randrange(3, 10))
@@ -122,13 +124,11 @@ def build_snake(list_of_sprites, snake):
         # bxy = (xy, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE))
         if n == 0:
             bbody = (head, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE))
-            eye1 = (head2, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE + 1))
-            eye2 = (head2, (pos[0] * BLOCK_SIZE + 10, pos[1] * BLOCK_SIZE + 1))
         else:
             bbody = (body, (pos[0] * BLOCK_SIZE, pos[1] * BLOCK_SIZE))
         list_of_sprites.append(bbody)
 
-    snake_body = [bbody, eye1, eye2, btail]
+    snake_body = [bbody, btail]
     return snake_body
 
 

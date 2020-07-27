@@ -1,0 +1,42 @@
+PySnake
+Documentation
+
+Todo
+- Wanna make the snake move 1 pixel at the time
+but do not turn until he covers 20 pixels
+
+
+
+
+Index of contents
+
+- Where are the images
+
+
+==========================================
+- Where are the images
+
+In the costants.py in the functions folder.
+
+snake.py
+	|
+	functions
+		|
+		costants.py
+			|
+			head = pygame.image.load("imgs/head20.png").convert()
+			body = pygame.Surface((20, 20))
+			body.fill((0, 255, 0))
+			blacktail = pygame.Surface((20, 20))
+			blacktail.fill((0, 0, 0))
+			fruit = pygame.image.load("imgs/apple2.png").convert()
+			fruit.set_colorkey((255, 255, 255))
+			bscore2 = pygame.Surface((80, 15))
+			bscore2.fill((0, 0, 0))
+
+The head is an image
+the body parts are just surfaces colored in green (0, 255, 0)
+blacktail is used to cover the last body part, because I do not
+clear the screen to save (maybe) frame rate. I will substitute this
+tecnique with group.clear() when I will use a sprite instead.
+bscore covers the score as blacktail covers the last body part.

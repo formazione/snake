@@ -5,21 +5,27 @@ class Snake(pygame.sprite.Sprite):
     """docstring for Snake"""
     head = pygame.image.load("imgs/head.png")
     skin = pygame.image.load("imgs/skin.png")
-    tail = pygame.Surface((5, 5))
-    tail.fill((0, 0, 0))
+    delete_tail = pygame.Surface((5, 5))
+    delete_tail.fill((0, 0, 0))
 
     def __init__(self):
         self.direction = "right"
         self.x = 5 * 20
         self.y = 5 * 20
-        self.body = [
-            [Snake.head, [self.x, self.y]],
-            [Snake.skin, [self.x - 5, self.y]],
-            [Snake.skin, [self.x - 10, self.y]]
-        ]
+        self.head = Snake.head
+        self.skin = Snake.skin
+        self.delete_tail = Snake.delete_tail
+        self.body = []
+        self.build_body()
+
+    def build_body(self):
+        self.body.append([self.head, self.x, self.y])
+        self.body.append([self.skin, self.x - 5, self.y])
+        #self.body.append([self.delete_tail, self.x - 10, self.y])
 
 
 snake = Snake()
+print(snake.body)
 class Game:
     "Starts the game"
     pygame.init()
@@ -30,11 +36,15 @@ class Game:
     screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 16)
     display = pygame.Surface((WIDTH // 4, HEIGHT // 4))
     clock = pygame.time.Clock()
+    row = randrange(1, 20)
+    col = randrange(1, 20)
+    pos_food = [row * 20, col * 20]
+    count = 0
     # used by Game.move()
-    next_step = {
+    move_to = {
         "right": 1,
         "left": -1,
-        "K_UP": -1,
+        "up": -1,
         "down": 1}
 
     def menu() -> None:
@@ -51,6 +61,7 @@ class Game:
                 break
             if keys[pygame.K_s]:
                 print("Start")
+                Game.display.fill((0, 0, 0))
                 Game.start()
                 # break
         pygame.quit()
@@ -65,24 +76,24 @@ class Game:
         Game.write('Snake', 0, 0, middle='')"
         text = Game.font.render(t, 1, pygame.Color(color))
         if middle == "both":
-            rect_middle = text.get_rect(center=((Game.WIDTH // 2, Game.HEIGHT //2)))
+            rect_middle = text.get_rect(center=((Game.WIDTH // 2, Game.HEIGHT // 2)))
             Game.display.blit(text, rect_middle)
         else:
             Game.display.blit(text, (x, y))
-        Game.screen.blit(pygame.transform.scale(Game.display, (400, 400)), (0,0))
+        Game.screen.blit(pygame.transform.scale(Game.display, (600, 600)), (0,0))
         pygame.display.update()
         return text
 
 
     def start():
 
-        go = "RIGHT"
-        row = randrange(1, 20)
-        col = randrange(1, 20)
+        go = "right"
+
         # a random posizion multiple of 20
-        pos_food = [row * 20, col * 20]
+        
         loop = 1
         while loop:
+            Game.display.fill((0,0,0))
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     loop = 0
@@ -93,35 +104,51 @@ class Game:
                     elif event.key == pygame.K_RIGHT:
                         go = "right"
                     elif event.key == pygame.K_UP:
-                        go = "K_UP"
+                        go = "up"
                     elif event.key == pygame.K_DOWN:
                         go = "down"
                     elif event.key == pygame.K_LEFT:
                         go = "left"
-                    Game.not_back(go)
-                    Game.move()
-                    Game.blit_all()
-            Game.screen.blit(pygame.transform.scale(Game.display, (400, 400)), (0,0))
+            Game.not_back(go)
+            Game.move()
+            Game.blit_all()
+            Game.screen.blit(pygame.transform.scale(Game.display, (600, 600)), (0,0))
             pygame.display.update()
-            Game.clock.tick(60)
+            Game.clock.tick(30)
         pygame.quit()
 
     def not_back(wanna_go):
         "Avoid going backwards and moves"
-        if wanna_go in "LEFT RIGHT":
-            if snake.direction in "UP DOWN":
+        Game.count += 1
+        if Game.count == 5:
+            Game.count = 0
+            if wanna_go in "left right":
+                if snake.direction in "up down":
+                    snake.direction = wanna_go
+            # IF YOU GO LEFT OR RIGHT YOU CAN GO UP OR DOWN
+            elif snake.direction in "left right":
                 snake.direction = wanna_go
-        # IF YOU GO LEFT OR RIGHT YOU CAN GO UP OR DOWN
-        elif snake.goes_to in "LEFT RIGHT":
-            snake.direction = wanna_go
-        # ========= goes to the next step =====
+            # ========= goes to the next step =====
 
     def move():
-        if snake.direction in "RIGHT LEFT":
-            snake.x += Game.next_step[snake.direction]
+        if snake.direction in "right left":
+                snake.x += Game.move_to[snake.direction]
         else:
-            snake.y += Game.next_step[snake.direction]
-        snake.body.insert(0, [snake.x, snake.y])
+                snake.y += Game.move_to[snake.direction]
+        snake.build_body()
+        Game.check_eat()
+
+    def check_eat():
+        if [snake.x, snake.y] == Game.pos_food:
+            return 1
+        else:
+            snake.body.pop()
+            return 0
+
+    def add_head():
+        snake.body.insert(0, [snake.head, snake.x, snake.y])
+        # snake.body.pop(1)
+        #snake.body[1] = [snake.skin, snake.body[1][1], snake.body[1][2]]
 
     def blit_all():
         "Blits all the sprites and surfaces"
@@ -131,7 +158,19 @@ class Game:
         "Creates the sequence to be blitted"
         seq_snake = []
         for n in snake.body:
-            seq_snake.append((n[0], (n[1][0], n[1][1])))
+            srf, x, y = n
+            seq = (srf, (x, y))
+            seq_snake.append(seq)
+        # # Add the surface snake.delete_tail that delete the tail
+        # # when you go right is good... but not when goes towards left up dpwn
+        # if snake.direction == "right":
+        #     seq_snake.append((snake.delete_tail, (snake.body[-1][1] - 5, snake.body[-1][2])))
+        # if snake.direction == "left":
+        #     seq_snake.append((snake.delete_tail, (snake.body[-1][1] + 5, snake.body[-1][2])))
+        # if snake.direction == "up":
+        #     seq_snake.append((snake.delete_tail, (snake.body[-1][1], snake.body[-1][2] + 5)))
+        # if snake.direction == "down":
+        #     seq_snake.append((snake.delete_tail, (snake.body[-1][1], snake.body[-1][2] - 5)))
         return seq_snake
 
 Game.menu()

@@ -58,7 +58,7 @@ class Snake():
             self.body.pop()
             # A random not at a random time and random volume
             return 0
-        print(f"{music=}")
+
         if music:
             print("music is on")
             random_play(rnd=random.randrange(3, 10))
