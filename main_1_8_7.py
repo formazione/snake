@@ -67,12 +67,15 @@ class Snake():
 
     def check_collisions(self):
         "Check if it goes out or on himself"
+        global cnt
+        
         game_over_points = (
         self.x >= 20 or self.x < 0,
         self.y > 20 or self.y < 0,
         [x for x in self.body[4:] if (self.x, self.y) == x]
         )
         if any(game_over_points):
+            cnt = 0
             return 1
         else:
             return 0
@@ -134,10 +137,11 @@ def build_snake(list_of_sprites, snake):
 
 xs = 5
 ys = 6
+cnt = 0
 def show_snake():
     'show the snake for the menu'
+    global cnt
     global xs, ys
-
     if xs < 21:
         xs += .1
     else:
@@ -146,6 +150,12 @@ def show_snake():
     l = []
     s = build_snake(l, psnake)
     l.extend(s)
+    if cnt == 0:
+        l.append([fruit, (380, random.randrange(120, 280, 20))])
+        l.append([fruit, (380, random.randrange(120, 280, 20))])
+        l.append([fruit, (380, random.randrange(120, 280, 20))])
+        l.append([fruit, (380, random.randrange(120, 280, 20))])
+    cnt = 1
     window.blits(blit_sequence=(l))
     pygame.display.update()
 
