@@ -3,27 +3,10 @@ from functions.costants import *
 from functions.score import *
 import random
 
-
-'''
-funtions:
-    - soundinit.py
-        initialize sounds and let you play with play and random_play
-        play need the name of the file as argument
-        random_play does not need argument, but you can specify a number for randomness
-    - Costants.snake.py
-        the class that gives the starting position of the snake, builds the
-        Costants.snake.body list with the coordinates of the parts, add a new part or
-        moves it forward, check if it eats or goes out of the borders
-'''
-
-
-#                         2 main objects
-
 class Snake():
     def __init__(self):
         "I made the method so I can call it to restart"
         self.start()
-
 
     def start(self):
         "Where the snake starts and Costants.snake.body first list build"
@@ -57,6 +40,7 @@ class Snake():
 
         self.body.insert(0, [self.x, self.y])
         if [self.x, self.y] == food_pos:
+            random_play()
             text = write(f"You ate : {fruitname}", 200, 0)
             fruit = random.choice(Costants.FRUITS)
             fruitname, fruit = fruit
@@ -172,13 +156,26 @@ def big(_window):
 
 xs = 5
 ys = 6
-cnt = 0
+
 
 
 def show_snake():
     'show the snake for the menu'
     global cnt, fruit
     global xs, ys
+    bfruit = pygame.Surface((20, 20))
+    bfruit.fill((0, 0, 0))
+    def show_fruits():
+        cnt = 0
+        for i in range(4):
+            if cnt == 0:
+                fruit = random.choice(Costants.FRUITS)
+                fruit = fruit[1]
+                yrnd = random.randrange(120, 280, 20)
+                l.append([bfruit, (380, yrnd)])
+                l.append([fruit, (380, yrnd)])
+        cnt = 1
+
 
     if xs < 21:
         xs += .1
@@ -188,20 +185,7 @@ def show_snake():
     l = []
     s = build_snake(l, psnake)
     l.extend(s)
-    if cnt == 0:
-        fruit = random.choice(Costants.FRUITS)
-        fruit = fruit[1]
-        l.append([fruit, (380, random.randrange(120, 280, 20))])
-        fruit = random.choice(Costants.FRUITS)
-        fruit = fruit[1]
-        l.append([fruit, (380, random.randrange(120, 280, 20))])
-        fruit = random.choice(Costants.FRUITS)
-        fruit = fruit[1]
-        l.append([fruit, (380, random.randrange(120, 280, 20))])
-        fruit = random.choice(Costants.FRUITS)
-        fruit = fruit[1]
-        l.append([fruit, (380, random.randrange(120, 280, 20))])
-    cnt = 1
+    show_fruits()
     Costants.window.blits(blit_sequence=(l))
     big(Costants.window)
     pygame.display.update()
