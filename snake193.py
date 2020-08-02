@@ -43,6 +43,7 @@ class Snake():
             self.moves_towards = wanna_go
 
     def move(self, food_pos):
+        global fruit, fruitname
 
         directions = {
             "RIGHT": 1,
@@ -56,6 +57,13 @@ class Snake():
 
         self.body.insert(0, [self.x, self.y])
         if [self.x, self.y] == food_pos:
+            text = write(f"You ate : {fruitname}", 200, 0)
+            fruit = random.choice(Costants.FRUITS)
+            fruitname, fruit = fruit
+
+            text_rect = text.get_rect(center=((Costants.w2, 10)))
+            Costants.window.blit(Costants.clean, text_rect)
+            Costants.window.blit(text, text_rect)
             # not popping the last element, it grows in size
             return 1
         else:
@@ -75,17 +83,13 @@ class Snake():
         game_over_points = (
         self.x >= 20 or self.x < 0,
         self.y > 20 or self.y < 0,
-        [x for x in self.body[4:] if (self.x, self.y) == x]
+        [x for x in self.body[1:] if [self.x, self.y] == x]
         )
-        print("cosa")
         if any(game_over_points):
-            print("ciao")
-            print(f"score: {Costants.score} maxscore {game.maxscore}")
             game.save_score(Costants.score)
             cnt = 0
             return 1
         else:
-            print("I am here")
             return 0
 
 
@@ -101,7 +105,7 @@ def add(content):
 
 def blit_all(food_pos):
     "Create all the tuples for Costants.window.blits blit_sequence"
-    global game, list_of_tuples
+    global game, list_of_tuples, fruit
 
     list_of_tuples = []
     
@@ -121,11 +125,11 @@ def blit_all(food_pos):
     # The fly
     add((Costants.fly, (0,0)))
     # fruit and number
-    add((Costants.fruit, (food_pos[0] * Costants.BLOCK_SIZE, food_pos[1] * Costants.BLOCK_SIZE)))
-    add((number_on_apple(food_pos)))
+    add((fruit, (food_pos[0] * Costants.BLOCK_SIZE, food_pos[1] * Costants.BLOCK_SIZE)))
+    # add((number_on_apple(food_pos)))
     # Snake
     list_of_tuples.extend(build_snake(list_of_tuples, snake.body))
-    print(list_of_tuples)
+
     Costants.window.blits(blit_sequence=(list_of_tuples))
     big(Costants.window)
 
@@ -153,12 +157,12 @@ def build_snake(list_of_sprites, _snake):
     for n, pos in enumerate(_snake):
         # bxy = (xy, (pos[0] * Costants.BLOCK_SIZE, pos[1] * Costants.BLOCK_SIZE))
         if n == 0:
-            bbody = (Costants.head, (pos[0] * Costants.BLOCK_SIZE, pos[1] * Costants.BLOCK_SIZE))
+            bhead = (Costants.head, (pos[0] * Costants.BLOCK_SIZE, pos[1] * Costants.BLOCK_SIZE))
         else:
             bbody = (Costants.body, (pos[0] * Costants.BLOCK_SIZE, pos[1] * Costants.BLOCK_SIZE))
-        list_of_sprites.append(bbody)
+            list_of_sprites.append(bbody)
 
-    snake_body = [bbody, btail]
+    snake_body = [bhead, bbody, btail]
     return snake_body
 
 
@@ -169,10 +173,13 @@ def big(_window):
 xs = 5
 ys = 6
 cnt = 0
+
+
 def show_snake():
     'show the snake for the menu'
-    global cnt
+    global cnt, fruit
     global xs, ys
+
     if xs < 21:
         xs += .1
     else:
@@ -182,10 +189,18 @@ def show_snake():
     s = build_snake(l, psnake)
     l.extend(s)
     if cnt == 0:
-        l.append([Costants.fruit, (380, random.randrange(120, 280, 20))])
-        l.append([Costants.fruit, (380, random.randrange(120, 280, 20))])
-        l.append([Costants.fruit, (380, random.randrange(120, 280, 20))])
-        l.append([Costants.fruit, (380, random.randrange(120, 280, 20))])
+        fruit = random.choice(Costants.FRUITS)
+        fruit = fruit[1]
+        l.append([fruit, (380, random.randrange(120, 280, 20))])
+        fruit = random.choice(Costants.FRUITS)
+        fruit = fruit[1]
+        l.append([fruit, (380, random.randrange(120, 280, 20))])
+        fruit = random.choice(Costants.FRUITS)
+        fruit = fruit[1]
+        l.append([fruit, (380, random.randrange(120, 280, 20))])
+        fruit = random.choice(Costants.FRUITS)
+        fruit = fruit[1]
+        l.append([fruit, (380, random.randrange(120, 280, 20))])
     cnt = 1
     Costants.window.blits(blit_sequence=(l))
     big(Costants.window)
@@ -194,7 +209,7 @@ def show_snake():
 
 def menu():
     "This is the menu that waits you to click the s key to start"
-    global xs, ys, game
+    global xs, ys, game, fruit, fruitname
     # this will game.maxscore = 10... for example
     game = Score("score.txt")
     xs = 5
@@ -227,6 +242,8 @@ def menu():
                 Costants.GAME_SPEED = 8
                 Costants.window.fill((0, 0, 0))
                 snake.start()
+                fruit = random.choice(Costants.FRUITS)
+                fruitname, fruit = fruit
                 start()
         pygame.display.update()
         Costants.clock.tick(Costants.GAME_SPEED)
@@ -270,7 +287,7 @@ def start():
             if Costants.score > int(game.maxscore):
                 game.maxscore = str(Costants.score)
                 #game.save_score(Costants.score)
-            Costants.GAME_SPEED += 1
+            Costants.GAME_SPEED += .5
             food_pos = [random.randrange(1, Costants.BOARD_SIZE), random.randrange(1, Costants.BOARD_SIZE)]
         # Draw everything on
         blit_all(food_pos)

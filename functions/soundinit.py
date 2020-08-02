@@ -56,7 +56,6 @@ def init(directory):
 
 def play(snd):
     "Plays one of the sounds in the sounds folder using play('name')"
-    print(snd)
     pygame.mixer.Sound.play(sounds[snd])
 
 
