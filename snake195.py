@@ -3,6 +3,8 @@ from functions.costants import *
 from functions.score import *
 import random
 
+
+
 class Snake():
     def __init__(self):
         "I made the method so I can call it to restart"
@@ -41,17 +43,30 @@ class Snake():
         self.body.insert(0, [self.x, self.y])
         if [self.x, self.y] == food_pos:
             random_play()
-            text = write(f"You ate : {fruitname}", 200, 0)
+            
+            # Write what you eat
             if fruitname == "banana":
-                self.body.pop()
-                self.body.pop()
-                play()
-            fruit = random.choice(Costants.FRUITS)
-            fruitname, fruit = fruit
-
+                fruitname ="banana: go slow!"
+            text = write(f"You ate : {fruitname}", 300, 0)
             text_rect = text.get_rect(center=((Costants.w2, 10)))
             Costants.window.blit(Costants.clean, text_rect)
             Costants.window.blit(text, text_rect)
+
+            if fruitname == "cherry":
+                self.body = self.body[:3]
+
+            # whe you eat banana you do not grow
+            if fruitname == "banana: go slow!":
+                if len(self.body) > 3:
+                    self.body.pop()
+                    if Costants.GAME_SPEED > 8:
+                        Costants.GAME_SPEED -= 1
+                    # self.body.pop()
+
+                play("banana")
+            fruit = random.choice(Costants.FRUITS)
+            fruitname, fruit = fruit
+
             # not popping the last element, it grows in size
             return 1
         else:
@@ -76,6 +91,7 @@ class Snake():
         if any(game_over_points):
             game.save_score(Costants.score)
             cnt = 0
+            gameover()
             return 1
         else:
             return 0
@@ -286,5 +302,25 @@ def start():
         pygame.display.update()
         Costants.clock.tick(Costants.GAME_SPEED)
     pygame.quit()
+
+
+def gameover():
+    def surface(redux):
+        main = pygame.Surface((Costants.w - redux, Costants.h - redux))
+        if (redux // 20) % 2 == 0:
+            main.fill((0,0,0))
+        else:
+            main.fill((64, 64, 64))
+        Costants.window.blit(main, (redux, redux))
+        Costants.screen.blit(pygame.transform.scale(main, ((Costants.w - redux) * 2, (Costants.h - redux) * 2)), (redux, redux))
+        # pygame.time.delay(5)
+        pygame.display.update()
+        Costants.clock.tick(20)
+
+
+    play("over")
+    for x in range(20):
+        surface(x * 20)
+
 
 menu()
