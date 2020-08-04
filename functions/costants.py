@@ -1,14 +1,16 @@
 import pygame
 from functions.snake import *
+import os
 
 
-FRUITS = []
-def list_fruit(fname, img):
-    global FRUITS
-
-    fruit = pygame.image.load(img).convert_alpha()
-    fruit.set_colorkey((255, 255, 255))
-    FRUITS.append((fname, fruit))
+def list_fruit():
+    fruits = []
+    for img in os.listdir("imgs/fruits/"):
+        fname = img[:-4]
+        fruit = pygame.image.load("imgs/fruits/" + img).convert_alpha()
+        fruit.set_colorkey((255, 255, 255))
+        fruits.append((fname, fruit))
+    return fruits
 
 class Costants:
     BLACK = (0, 0, 0)
@@ -42,9 +44,7 @@ class Costants:
     clean = pygame.Surface((300, 20))
     clean.fill((0,0,0))
     # Create list of different fruits to choose with choice
-    for f in "apple2", "pear", "cherry", "apple", "apple3", "peachoch", "orange", "banana":
-        list_fruit(f, f"imgs/{f}.png")
-    FRUITS = FRUITS
+    FRUITS = list_fruit()
     fly = pygame.image.load("imgs/fly.png").convert_alpha()
 
     # Obscure score and maxscore text

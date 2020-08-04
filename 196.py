@@ -46,24 +46,26 @@ class Snake():
             random_play()
             
             # Write what you eat
-            if fruitname == "banana5":
+            if fruitname == "banana":
                 Costants.window.fill((0, 0, 0))
                 fruitname ="banana: go slow!"
-                play("banana")
+                play("banana5")
                 if len(self.body) > 3:
                     self.body = self.body[:-2]
                     if Costants.GAME_SPEED > 8:
                         Costants.GAME_SPEED -= 1
+            elif fruitname == "cherry":
+                Costants.window.fill((0, 0, 0))
+                self.body = self.body[:3]
+                play("cherry2")
+            else:
+                pass
+
 
             text = write(f"You ate : {fruitname}", 300, 0)
             text_rect = text.get_rect(center=((Costants.w2, 10)))
             Costants.window.blit(Costants.clean, text_rect)
             Costants.window.blit(text, text_rect)
-
-            if fruitname == "cherry":
-                Costants.window.fill((0, 0, 0))
-                self.body = self.body[:3]
-                play("banana5")
 
             fruit = random.choice(Costants.FRUITS)
             fruitname, fruit = fruit
@@ -77,9 +79,10 @@ class Snake():
             return 0
 
         if Costants.music:
-            print("music is on")
+            #print("music is on")
             #base.unload()
-            random_play(rnd=random.randrange(3, 10))
+            pass
+            # random_play(rnd=random.randrange(3, 10))
 
     def check_collisions(self):
         "Check if it goes out or on himself"
@@ -220,7 +223,7 @@ def menu():
     game = Score("score.txt")
     xs = 5
     base = pygame.mixer.music
-    base.load("sounds/base.ogg")
+    base.load("sounds/base2.ogg")
     base.play(-1)
 
     pygame.display.set_caption("Python Snake v. 1.8.8")
