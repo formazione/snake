@@ -3,12 +3,45 @@ from functions.costants import *
 from functions.score import *
 import random
 
+class Square:
+    def __init__(self):
+        self.start()
 
+    def start(self):
+        self.matrix = [
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        ]
 
+square = Square()
 class Snake():
     def __init__(self):
         "I made the method so I can call it to restart"
         self.start()
+        # number of square to fill to change stage 380
+        self.square_count = 0
+        # you need to eat 10 food to change level
+        self.food_eaten = 10
+        self.oxygen = 30
 
     def start(self):
         "Where the snake starts and Costants.snake.body first list build"
@@ -28,8 +61,8 @@ class Snake():
             self.moves_towards = wanna_go
 
     def move(self, food_pos):
-        global fruit, fruitname, base
-
+        global fruit, fruitname, base, list_of_tuples, eat_banana
+        # THE STEP OF HIS MOVES
         directions = {
             "RIGHT": 1,
             "LEFT": -1,
@@ -41,42 +74,29 @@ class Snake():
             self.y += directions[self.moves_towards]
 
         self.body.insert(0, [self.x, self.y])
+
+
+
+        ###################################
+        #                                 #
+        #          Snake gets the food    #
+        #                                 #
+        ###################################
+
         if [self.x, self.y] == food_pos:
-            # base.stop()
-            # random_play()
-            eat_effect()
-            
-            # Write what you eat
-            if fruitname == "banana":
-                Costants.window.fill((0, 0, 0))
-                fruitname ="banana: go slow!"
-                play("banana5")
-                if len(self.body) > 3:
-                    self.body = self.body[:-2]
-                    if Costants.GAME_SPEED > 8:
-                        Costants.GAME_SPEED -= 1
-            elif fruitname == "cherry":
-                Costants.window.fill((0, 0, 0))
-                self.body = self.body[:3]
-                play("cherry2")
-            else:
-                pass
+            self.food_eaten += 1
+            self.oxygen = 30
 
-
-            text = write(f"You ate : {fruitname}", 300, 0)
-            text_rect = text.get_rect(center=((Costants.w2, 10)))
-            Costants.window.blit(Costants.clean, text_rect)
-            Costants.window.blit(text, text_rect)
-
+            # CHOOSE A NEW FRUIT
             fruit = random.choice(Costants.FRUITS)
+            # GET NAME OF THE FRUIT AND SURFACE
             fruitname, fruit = fruit
-
-            # not popping the last element, it grows in size
+            # RETURN 1 WHEN SNAKE ATE
             return 1
         else:
-            "If do not eat... same size"
+            # IF NOT EAT REMAIN OF THE SAME SIZE
             self.body.pop()
-            # A random not at a random time and random volume
+            # RETURN 0 WHEN DO NOT EAT
             return 0
 
         if Costants.music:
@@ -90,8 +110,9 @@ class Snake():
         global cnt, game
 
         game_over_points = (
+        self.oxygen < 0,
         self.x >= 20 or self.x < 0,
-        self.y > 19 or self.y < 0,
+        self.y > 19 or self.y < 1,
         [x for x in self.body[1:] if [self.x, self.y] == x]
         )
         if any(game_over_points):
@@ -100,14 +121,25 @@ class Snake():
             gameover()
             return 1
         else:
+            # EAT TERRAIN
+            if square.matrix[self.x][self.y] == 0:
+                Costants.score += 1
+                square.matrix[self.x][self.y] = 1
+                self.oxygen -= 1
+                self.square_count += 1
+                if self.square_count > 380 and self.food_eaten > 9:
+                    self.square_count = 0
+                    self.food_eaten = 0
+                    start()
+                # play("dig")
             return 0
 
 
-def number_on_apple(food_pos):
-    text_surface = write(f"{Costants.score + 1}", food_pos[0] * Costants.BOARD_SIZE + 5, food_pos[1] * Costants.BOARD_SIZE + 3, color="Black")
-    btext = (text_surface,
-        (food_pos[0] * Costants.BOARD_SIZE + 5, food_pos[1] * Costants.BOARD_SIZE + 3))
-    return btext
+# def number_on_apple(food_pos):
+#     text_surface = write(f"{Costants.score + 1}", food_pos[0] * Costants.BOARD_SIZE + 5, food_pos[1] * Costants.BOARD_SIZE + 3, color="Black")
+#     btext = (text_surface,
+#         (food_pos[0] * Costants.BOARD_SIZE + 5, food_pos[1] * Costants.BOARD_SIZE + 3))
+#     return btext
 
 def add(content):
     global list_of_tuples
@@ -128,12 +160,12 @@ def blit_all(food_pos):
 
     # Hide score and maxscore
     add((Costants.bscore1, (0, 0)))
-    add((Costants.bscore2, (300, 0)))
-    add((write(f"Score: {Costants.score}", 0, 0), (20, 0)))
+    add((write(f"Score: {Costants.score} Oxy: {snake.oxygen}", 0, 0), (20, 0)))
     b_maxiscore = write(f"Max-score: {game.maxscore}", 0, 0)
     add((b_maxiscore, (300, 0)))
     # The fly
     add((Costants.fly, (0,0)))
+
     # fruit and number
     add((fruit, (food_pos[0] * Costants.BLOCK_SIZE, food_pos[1] * Costants.BLOCK_SIZE)))
     # add((number_on_apple(food_pos)))
@@ -144,7 +176,37 @@ def blit_all(food_pos):
     big(Costants.window)
 
 
+def build_snake(list_of_sprites, _snake):
+    'Builds the snake'
+
+
+    btail = (
+        Costants.blacktail,
+        (
+            _snake[-1][0] * Costants.BLOCK_SIZE,
+            _snake[-1][1] * Costants.BLOCK_SIZE))
+    for n, pos in enumerate(_snake):
+        if n == 0:
+            bhead = (
+                Costants.head, (
+                    pos[0] * Costants.BLOCK_SIZE,
+                    pos[1] * Costants.BLOCK_SIZE))
+        else:
+            bbody = (
+                Costants.body,
+                (
+                    pos[0] * Costants.BLOCK_SIZE,
+                    pos[1] * Costants.BLOCK_SIZE))
+            list_of_sprites.append(bbody)
+
+    snake_body = [bhead, bbody, btail]
+
+    return snake_body
+
+
 font = pygame.font.SysFont("Arial", 14)
+
+
 def write(text_to_show, x=0, y=0, middle=0, color="Coral"):
     'To write some text on the Costants.screen for the menu and the score \
     if middle = 0, will put the text at 0,0 unless you specify coordinates \
@@ -160,20 +222,6 @@ def write(text_to_show, x=0, y=0, middle=0, color="Coral"):
     return text
 
 
-def build_snake(list_of_sprites, _snake):
-    'Builds the snake getting the coordinate from Costants.snake.body and blitting \
-    a square on every coordinate, it also 2 squares for the eyes'
-    btail = (Costants.blacktail, (_snake[-1][0] * Costants.BLOCK_SIZE, _snake[-1][1] * Costants.BLOCK_SIZE))
-    for n, pos in enumerate(_snake):
-        # bxy = (xy, (pos[0] * Costants.BLOCK_SIZE, pos[1] * Costants.BLOCK_SIZE))
-        if n == 0:
-            bhead = (Costants.head, (pos[0] * Costants.BLOCK_SIZE, pos[1] * Costants.BLOCK_SIZE))
-        else:
-            bbody = (Costants.body, (pos[0] * Costants.BLOCK_SIZE, pos[1] * Costants.BLOCK_SIZE))
-            list_of_sprites.append(bbody)
-
-    snake_body = [bhead, bbody, btail]
-    return snake_body
 
 
 def big(_window):
@@ -190,7 +238,7 @@ def show_snake():
     global cnt, fruit
     global xs, ys
     bfruit = pygame.Surface((20, 20))
-    bfruit.fill((0, 0, 0))
+    bfruit.fill((64, 32, 0))
     def show_fruits():
         cnt = 0
         for i in range(4):
@@ -231,6 +279,7 @@ def menu():
     game = Score("score.txt")
     xs = 5
     soundtrack("sounds/base2.ogg", stop=1)
+    Costants.window.fill((76, 33, 0))
     pygame.display.set_caption("Python Snake v. 1.8.8")
     Costants.window.blit(write("PYTHON SNAKE 2020 - MADE WITH PYGAME", middle=1), (0, 30))
     Costants.window.blit(write("Press s to start", middle=1), (0, 60))
@@ -246,7 +295,9 @@ def menu():
     loop1 = 1
     while loop1:
         show_snake()
-        random_play()
+        # random_play()
+        # This empty the square with the terrain
+        square.start()
         event = pygame.event.wait()
         if (event.type == pygame.QUIT):
             break
@@ -258,7 +309,7 @@ def menu():
             if restart:
                 Costants.score = 0
                 Costants.GAME_SPEED = 8
-                Costants.window.fill((0, 0, 0))
+                Costants.window.fill((76, 33, 0))
                 snake.start()
                 fruit = random.choice(Costants.FRUITS)
                 fruitname, fruit = fruit
@@ -273,16 +324,16 @@ snake = Snake()
 Costants.music = 0
 def start():
     "Once you press the 's' key it runs, moves the snake a wait the user input"
-    global loop, base, fx_on, fx_count
+    global loop, base
 
     # pygame.mixer.music.unload()
-    soundtrack("sounds/base2.ogg")
+    soundtrack("sounds/base3.ogg")
     go = "RIGHT"
     food_pos = [random.randrange(1, Costants.BOARD_SIZE), random.randrange(1, Costants.BOARD_SIZE)]
     loop = 1
+    Costants.window.fill((76, 33, 0))
     while loop:
-        if fx_on:
-            eat_effect()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 loop = 0
@@ -306,18 +357,19 @@ def start():
         # Moves and check if eats
         if snake.move(food_pos):
             play("click")
-            Costants.score += 1
+            Costants.score += 20
             if Costants.score > int(game.maxscore):
                 game.maxscore = str(Costants.score)
                 #game.save_score(Costants.score)
             Costants.GAME_SPEED += .5
             food_pos = [random.randrange(1, Costants.BOARD_SIZE), random.randrange(1, Costants.BOARD_SIZE)]
         # Draw everything on
+        else:
+            if snake.check_collisions() == 1:
+                loop = 0
+                Costants.window.fill((76, 33, 0))
+                menu()
         blit_all(food_pos)
-        if snake.check_collisions() == 1:
-            loop = 0
-            Costants.window.fill((0, 0, 0))
-            menu()
         pygame.display.update()
         Costants.clock.tick(Costants.GAME_SPEED)
     pygame.quit()
@@ -339,32 +391,6 @@ def gameover():
     play("over")
     for x in range(20):
         surface(x * 20)
-fx_on = 0
-fx_count = 0
-
-def eat_effect():
-
-    global fx_on, fx_count
-    if fx_count > 10:
-        fx_on = 0
-    else:
-        print("fx on")
-        fx_on = 1
-        fx_count += 1
-        effect_size = 40
-        fx1 = pygame.Surface((effect_size - fx_count, effect_size - fx_count))
-        if (fx_count // 2) % 2 == 0:
-            fx1.fill((0,0,0))
-        else:
-            fx1.fill((64, 64, 64))
-        Costants.window.blit(fx1, (snake.x - fx_count, snake.y - fx_count))
-        Costants.screen.blit(pygame.transform.scale(fx1,
-            ((effect_size - fx_count) * 2, (effect_size - fx_count) * 2)),
-            (snake.x - fx_count, snake.y - fx_count))
-        # pygame.time.delay(5)
-        pygame.display.update()
-        Costants.clock.tick(20)
-
 
 
 

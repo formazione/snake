@@ -1,0 +1,10 @@
+1.9.9
+
+- fixed sound of digging
+
+todo:
+- fix lose skin for banana and cherry
+- add particles for digging and eating
+- something to happen when you dig all the screen (1,1,1,1,...)
+- add enemyes
+- add carrot and peanuts to eat
