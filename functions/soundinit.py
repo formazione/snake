@@ -42,7 +42,7 @@ def init(directory):
     pygame.mixer.init(44100, -16, 2, 512)
     pygame.mixer.set_num_channels(32)
     # Load all sounds
-    lsounds = glob(f"{directory}/*.mp3")
+    lsounds = glob(f"{directory}/*.wav")
     # Dictionary with all sounds, keys are the name of wav
     sounds = {}
     random_sounds = []
