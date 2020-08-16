@@ -306,6 +306,8 @@ def menu():
     Costants.window.blit(write("Music is experimental", 0, 0), (0, 380))
     pygame.draw.line(Costants.window, (255, 255, 255), (0, 25), (400, 25), 2)
     pygame.draw.line(Costants.window, (255, 255, 255), (0, 110), (400, 110), 2)
+    logo = pygame.image.load("imgs/snake.png")
+    Costants.window.blit(logo, (25, 150))
     big(Costants.window)
     loop1 = 1
     while loop1:
