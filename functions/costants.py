@@ -4,6 +4,7 @@ import os
 
 
 def list_fruit():
+    "Used by Costants.FRUITS to store names and surface of fruits"
     fruits = []
     for img in os.listdir("imgs/fruits/"):
         fname = img[:-4]
@@ -29,7 +30,7 @@ class Costants:
     GAME_SPEED = 8  # Game speed (Normal = 10), The bigger, the faster
     screen = pygame.display.set_mode((BOARD_SIZE * BLOCK_SIZE * 2, BOARD_SIZE * BLOCK_SIZE * 2))
     window = pygame.Surface((BOARD_SIZE * BLOCK_SIZE, BOARD_SIZE * BLOCK_SIZE))
-    pygame.display.set_caption("Snake 1.9.0")
+    pygame.display.set_caption("Snake 2.0.3")
     score = 0
     music = 0
     w, h = window.get_size()
@@ -47,7 +48,7 @@ class Costants:
     # clean.fill((128, 64, 0))
     # Create list of different fruits to choose with choice
     FRUITS = list_fruit()
-    fly = pygame.image.load("imgs/fly.png").convert_alpha()
+    fly = pygame.image.load("imgs/fly2.png").convert_alpha()
 
     # Obscure score and maxscore text
     bscore1 = pygame.Surface((400, 20))

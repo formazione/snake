@@ -68,13 +68,24 @@ def random_play(rnd=3):
         sound.set_volume(1 / random.randrange(1, 10))
         sound.play()
 
+# List of songs for the soundtrack
 base = pygame.mixer.music
-def soundtrack(filename, stop=0):
+music = ["sounds/" + f
+for f in os.listdir("sounds/")
+if f.startswith("base")]
+
+def load_random_song():
+    song = random.choice(music)
+    return song
+
+def soundtrack(play="yes", loop=1):
     "This load a base from sounds directory"
-    base.load(filename)
-    if stop == 1:
+    filename = load_random_song()
+    if play == "yes":
+        base.load(filename)
+    elif play == "stop" and filename != None:
         base.stop()
-    else:
+    if loop == 1 and play == "yes":
         base.play(-1)
 
 sounds, random_sounds = init("sounds")

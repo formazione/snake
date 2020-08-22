@@ -1,0 +1,10 @@
+Snake documantation
+
+soudtrack()
+2.0.3
+	In functions.soundinit
+	Returns a random song from the wav starting with base
+
+	arg. filename 		default: random, chosen among load_random_song()
+	play [yes, stop]	default: yes
+	loop [1, 0]			default: 1, continuous loop
