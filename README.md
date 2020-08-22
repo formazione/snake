@@ -2,7 +2,7 @@
 Inspired by classic snake game for python
 
 PySnake - 2.0.3
-<iframe width="598" height="336" src="https://www.youtube.com/embed/Qo4EeCgGml4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+https://www.youtube.com/embed/Qo4EeCgGml4
 
 New Rules
 
