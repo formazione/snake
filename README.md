@@ -1,6 +1,9 @@
 # snake
 Inspired by classic snake game for python
 
+Pysnake - 2.0.4
+https://youtu.be/CCuSBNv8Cnw
+
 PySnake - 2.0.3
 https://www.youtube.com/embed/Qo4EeCgGml4
 
