@@ -23,3 +23,8 @@ Do not go out of oxygen
 
 https://youtu.be/lFyFrhaWrAk
 https://itch.io/formazione/pysnake
+
+If you like classic game remake:
+https://github.com/formazione/flappy
+https://github.com/formazione/arkapygame
+https://github.com/formazione/chimp_memory
